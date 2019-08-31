@@ -1,0 +1,649 @@
+mysql> use DBTAssingment;
+Database changed
+mysql> create table salespeople
+    -> (
+    -> snum int, sname varchar(10), city varchar(10), comm float
+    -> );
+Query OK, 0 rows affected (0.05 sec)
+
+mysql> insert into salespeople values
+    -> (1001,'Peel','London',.12),
+    -> (1002,'Serres','San Jose',.13),
+    -> (1004,'Motika','London',.11),
+    -> (1007,'Rifkin','Barcelona',.15).
+    -> ;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '.' at line 5
+mysql> insert into salespeople values
+    -> (1001,'Peel','London',.12),
+    -> (1002,'Serres','San Jose',.13),
+    -> (1004,'Motika','London',.11),
+    -> (1007,'Rifkin','Barcelona',.15).
+    -> ;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '.' at line 5
+mysql> insert into salespeople values
+    -> (1001,'Peel','London',.12),
+    -> (1002,'Serres','San Jose',.13),
+    -> (1004,'Motika','London',.11),
+    -> (1007,'Rifkin','Barcelona',.15),
+    -> (1003,'AxelRod','New York',.10),
+    -> (1005,'Fran','London',.26);
+Query OK, 6 rows affected (0.03 sec)
+Records: 6  Duplicates: 0  Warnings: 0
+
+mysql> select * from salespeople;
++------+---------+-----------+------+
+| snum | sname   | city      | comm |
++------+---------+-----------+------+
+| 1001 | Peel    | London    | 0.12 |
+| 1002 | Serres  | San Jose  | 0.13 |
+| 1004 | Motika  | London    | 0.11 |
+| 1007 | Rifkin  | Barcelona | 0.15 |
+| 1003 | AxelRod | New York  |  0.1 |
+| 1005 | Fran    | London    | 0.26 |
++------+---------+-----------+------+
+6 rows in set (0.00 sec)
+
+mysql> create table customers
+    -> (
+    -> cnum int,
+    -> cname varchar(10),
+    -> city varchar(10),
+    -> ;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '' at line 5
+mysql>
+mysql>
+mysql> alter table salespeople
+    -> modify snum primary key;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'primary key' at line
+ 2
+mysql> alter table salespeople
+    -> modify snum int primary key;
+Query OK, 6 rows affected (0.20 sec)
+Records: 6  Duplicates: 0  Warnings: 0
+
+mysql> create table customers
+    -> (
+    -> cnum int,
+    -> cname varchar(10),
+    -> city varchar(10),
+    -> rating int,
+    -> snum int,
+    -> constraint cus_snum_fk
+    -> foreign key(snum)
+    -> references salespeople(snum)
+    -> );
+Query OK, 0 rows affected (0.06 sec)
+
+mysql> alter table customer
+    -> modify cnum int primary key;
+ERROR 1146 (42S02): Table 'dbtassingment.customer' doesn't exist
+mysql> alter table customers
+    -> modify cnum int primary key;
+Query OK, 0 rows affected (0.16 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql>
+mysql>
+mysql>
+mysql>
+mysql> create table orders
+    -> (
+    -> onum int primary key,
+    -> amt decimal(8,2),
+    -> odate date,
+    -> cnum int,
+    -> snum int,
+    ->  constraint cus_snum_fk
+    ->  foreign key(snum)
+    -> ;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '' at line 9
+mysql> create table orders
+    -> (
+    -> onum int primary key,
+    -> amt decimal(8,2),
+    -> odate date,
+    -> cnum int,
+    -> snum int,
+    ->  constraint orders_cnum_fk
+    ->  foreign key(cnum)
+    ->  references customers(cnum),
+    ->  constraint orders_snum_fk
+    ->  foreign key(snum)
+    ->  references salespeople(snum)
+    -> );
+Query OK, 0 rows affected (0.14 sec)
+
+mysql> insert into customers values
+    -> (2001,'Hoffman','London',100,1001),
+    -> (2002,'Giovanni','Rome',200,1003),
+    -> (2003,'Liu','San Jose',200,1002),
+    -> (2004,'Grass','Berlin',300,1002),
+    -> (2006,'Clemens','London',100,1001),
+    -> (2008,'Cisneros','San Jose',300,1007),
+    -> (2007,'Pereira','Rome',100,1004)
+    -> ;
+Query OK, 7 rows affected (0.02 sec)
+Records: 7  Duplicates: 0  Warnings: 0
+
+mysql> select * from customers;
++------+----------+----------+--------+------+
+| cnum | cname    | city     | rating | snum |
++------+----------+----------+--------+------+
+| 2001 | Hoffman  | London   |    100 | 1001 |
+| 2002 | Giovanni | Rome     |    200 | 1003 |
+| 2003 | Liu      | San Jose |    200 | 1002 |
+| 2004 | Grass    | Berlin   |    300 | 1002 |
+| 2006 | Clemens  | London   |    100 | 1001 |
+| 2007 | Pereira  | Rome     |    100 | 1004 |
+| 2008 | Cisneros | San Jose |    300 | 1007 |
++------+----------+----------+--------+------+
+7 rows in set (0.00 sec)
+
+mysql> insert into orders values
+    -> (3001,18.69,'1996-03-10',2008,1007),
+    -> (3003,767.19,'1996-03-10',2001,1001),
+    -> (3002,1900.10,'1996-03-10',2007,1004),
+    -> (3005,5160.45,'1996-03-10',2003,1002),
+    -> (3006,1098.16,'1996-03-10',2008,1007),
+    -> (3009,1713.23,'1996-04-10',2002,1003),
+    -> (3007,75.75,'1996-04-10',2002,1003),
+    -> (3008,4723.00,'1996-05-10',2006,1001),
+    -> (3010,1309.95,'1996-06-10',2004,1002),
+    -> (3011,9891.88,'1996-06-10',2006,1001);
+Query OK, 10 rows affected (0.01 sec)
+Records: 10  Duplicates: 0  Warnings: 0
+
+mysql> select * from orders;
++------+---------+------------+------+------+
+| onum | amt     | odate      | cnum | snum |
++------+---------+------------+------+------+
+| 3001 |   18.69 | 1996-03-10 | 2008 | 1007 |
+| 3002 | 1900.10 | 1996-03-10 | 2007 | 1004 |
+| 3003 |  767.19 | 1996-03-10 | 2001 | 1001 |
+| 3005 | 5160.45 | 1996-03-10 | 2003 | 1002 |
+| 3006 | 1098.16 | 1996-03-10 | 2008 | 1007 |
+| 3007 |   75.75 | 1996-04-10 | 2002 | 1003 |
+| 3008 | 4723.00 | 1996-05-10 | 2006 | 1001 |
+| 3009 | 1713.23 | 1996-04-10 | 2002 | 1003 |
+| 3010 | 1309.95 | 1996-06-10 | 2004 | 1002 |
+| 3011 | 9891.88 | 1996-06-10 | 2006 | 1001 |
++------+---------+------------+------+------+
+10 rows in set (0.00 sec)
+
+1.
+mysql> select column_name from information_schema.columns
+    -> where table_name = 'salespeople';
++-------------+
+| column_name |
++-------------+
+| SNUM        |
+| SNAME       |
+| CITY        |
+| COMM        |
++-------------+
+4 rows in set (0.01 sec)
+
+2.
+mysql> select cname from customers
+    -> where rating = 100;
++---------+
+| cname   |
++---------+
+| Hoffman |
+| Clemens |
+| Pereira |
++---------+
+3 rows in set (0.00 sec)
+
+3.
+mysql> select * from Customers
+    -> where city is NULL;
+Empty set (0.00 sec)
+
+4.mysql> select o.onum, o.odate, o.amt, s.sname,o.snum
+    ->  FROM orders o JOIN salespeople s
+    -> ON o.snum = s.snum
+    ->  WHERE amt in (select max(amt)
+    ->  FROM orders group by snum,odate)
+    -> order by s.snum;
++------+------------+---------+---------+------+
+| onum | odate      | amt     | sname   | snum |
++------+------------+---------+---------+------+
+| 3003 | 1996-10-03 |  767.19 | Peel    | 1001 |
+| 3008 | 1996-10-05 | 4723.00 | Peel    | 1001 |
+| 3011 | 1996-10-06 | 9891.88 | Peel    | 1001 |
+| 3005 | 1996-10-03 | 5160.45 | Serres  | 1002 |
+| 3010 | 1996-10-06 | 1309.95 | Serres  | 1002 |
+| 3009 | 1996-10-04 | 1713.23 | AxelRod | 1003 |
+| 3002 | 1996-10-03 | 1900.10 | Motika  | 1004 |
+| 3006 | 1996-10-03 | 1098.16 | Rifkin  | 1007 |
++------+------------+---------+---------+------+
+8 rows in set (0.00 sec)
+
+5.
+mysql> select * from Orders
+    -> order by cnum desc;
++------+---------+------------+------+------+
+| onum | amt     | odate      | cnum | snum |
++------+---------+------------+------+------+
+| 3001 |   18.69 | 1996-03-10 | 2008 | 1007 |
+| 3006 | 1098.16 | 1996-03-10 | 2008 | 1007 |
+| 3002 | 1900.10 | 1996-03-10 | 2007 | 1004 |
+| 3008 | 4723.00 | 1996-05-10 | 2006 | 1001 |
+| 3011 | 9891.88 | 1996-06-10 | 2006 | 1001 |
+| 3010 | 1309.95 | 1996-06-10 | 2004 | 1002 |
+| 3005 | 5160.45 | 1996-03-10 | 2003 | 1002 |
+| 3009 | 1713.23 | 1996-04-10 | 2002 | 1003 |
+| 3007 |   75.75 | 1996-04-10 | 2002 | 1003 |
+| 3003 |  767.19 | 1996-03-10 | 2001 | 1001 |
++------+---------+------------+------+------+
+10 rows in set (0.00 sec)
+
+6.
+mysql> select distinct (sp.sname)
+    -> from orders o inner join salespeople sp
+    -> on o.snum = sp.snum;
++---------+
+| sname   |
++---------+
+| Peel    |
+| Serres  |
+| AxelRod |
+| Motika  |
+| Rifkin  |
++---------+
+5 rows in set (0.00 sec)
+
+7.
+mysql> select cname, sname
+    -> From customers inner join salespeople
+    -> on customers.snum = salespeople.snum;
++----------+---------+
+| cname    | sname   |
++----------+---------+
+| Hoffman  | Peel    |
+| Clemens  | Peel    |
+| Liu      | Serres  |
+| Grass    | Serres  |
+| Giovanni | AxelRod |
+| Pereira  | Motika  |
+| Cisneros | Rifkin  |
++----------+---------+
+7 rows in set (0.00 sec)
+-
+
+8.
+mysql> Select sp.sname, sp.snum
+    -> FROM salespeople sp join customers cus
+    -> on sp.snum = cus.snum
+    -> group by sp.snum
+    -> having count(*)>1;
++--------+------+
+| sname  | snum |
++--------+------+
+| Peel   | 1001 |
+| Serres | 1002 |
++--------+------+
+2 rows in set (0.00 sec)
+
+9.
+mysql> Select snum, count(*) as Count
+    -> FROM orders
+    -> group by snum
+    -> order by count desc;
++------+-------+
+| snum | Count |
++------+-------+
+| 1001 |     3 |
+| 1002 |     2 |
+| 1003 |     2 |
+| 1007 |     2 |
+| 1004 |     1 |
++------+-------+
+5 rows in set (0.00 sec)
+
+10.
+mysql> select * from customers
+    -> where (select count(*) FROM customers where city = 'san jose') >= 1;
++------+----------+----------+--------+------+
+| cnum | cname    | city     | rating | snum |
++------+----------+----------+--------+------+
+| 2001 | Hoffman  | London   |    100 | 1001 |
+| 2002 | Giovanni | Rome     |    200 | 1003 |
+| 2003 | Liu      | San Jose |    200 | 1002 |
+| 2004 | Grass    | Berlin   |    300 | 1002 |
+| 2006 | Clemens  | London   |    100 | 1001 |
+| 2007 | Pereira  | Rome     |    100 | 1004 |
+| 2008 | Cisneros | San Jose |    300 | 1007 |
++------+----------+----------+--------+------+
+7 rows in set (0.00 sec)
+
+
+11.
+mysql> select sales.sname,sales.city, cus.cname
+    -> FROM salespeople sales LEFT OUTER JOIN customers cus
+    -> on sales.city = cus.city
+    -> order by sales.city;
++---------+-----------+----------+
+| sname   | city      | cname    |
++---------+-----------+----------+
+| Rifkin  | Barcelona | NULL     |
+| Motika  | London    | Hoffman  |
+| Motika  | London    | Clemens  |
+| Fran    | London    | Hoffman  |
+| Peel    | London    | Hoffman  |
+| Fran    | London    | Clemens  |
+| Peel    | London    | Clemens  |
+| AxelRod | New York  | NULL     |
+| Serres  | San Jose  | Liu      |
+| Serres  | San Jose  | Cisneros |
++---------+-----------+----------+
+10 rows in set (0.00 sec)
+
+
+12.
+mysql> select sales.sname, max(o.amt)as max
+    -> from orders o join salespeople sales
+    -> on o.snum = sales.snum
+    -> group by o.snum;
++---------+---------+
+| sname   | max     |
++---------+---------+
+| Peel    | 9891.88 |
+| Serres  | 5160.45 |
+| AxelRod | 1713.23 |
+| Motika  | 1900.10 |
+| Rifkin  | 1098.16 |
++---------+---------+
+5 rows in set (0.00 sec)
+
+
+13.
+mysql> select cname from customers
+    -> where city = 'san jose' and rating > 200;
++----------+
+| cname    |
++----------+
+| Cisneros |
++----------+
+1 row in set (0.00 sec)
+
+14.
+mysql> select sname, comm from salespeople
+    -> where city = 'london';
++--------+------+
+| sname  | comm |
++--------+------+
+| Peel   | 0.12 |
+| Motika | 0.11 |
+| Fran   | 0.26 |
++--------+------+
+3 rows in set (0.00 sec)
+
+15.
+mysql> select o.onum
+    -> from orders o join salespeople sales
+    -> on o.snum = sales.snum
+    -> where sales.sname = 'Motika';
++------+
+| onum |
++------+
+| 3002 |
++------+
+1 row in set (0.00 sec)
+
+16.
+mysql> select distinct(cus.cname)
+    -> from customers cus join orders o
+    -> on cus.cnum = o.cnum
+    -> where o.odate = '1996-10-03';
++----------+
+| cname    |
++----------+
+| Hoffman  |
+| Liu      |
+| Pereira  |
+| Cisneros |
++----------+
+4 rows in set (0.00 sec)
+
+17.
+mysql> select sum(amt) as Sum
+    -> FROM orders
+    -> GROUP By odate
+    -> HAVING sum(amt) > (SELECT max(amt)+2000 as max
+    ->          from Orders);
+Empty set (0.00 sec)
+
+18.
+mysql> select onum,amt
+    -> from orders
+    -> where amt>(select min(amt) from orders
+    ->      where odate='1996-10-06');
++------+---------+
+| onum | amt     |
++------+---------+
+| 3002 | 1900.10 |
+| 3005 | 5160.45 |
+| 3008 | 4723.00 |
+| 3009 | 1713.23 |
+| 3011 | 9891.88 |
++------+---------+
+5 rows in set (0.00 sec)
+
+19.
+
+21.
+mysql> select cus.cnum,cus.cname
+    -> from customers cus join salespeople sales
+    -> on cus.snum=sales.snum
+    -> where cus.cnum>(select snum+1000 from salespeople where sname ='serres');
++------+----------+
+| cnum | cname    |
++------+----------+
+| 2003 | Liu      |
+| 2004 | Grass    |
+| 2006 | Clemens  |
+| 2007 | Pereira  |
+| 2008 | Cisneros |
++------+----------+
+5 rows in set (0.03 sec)
+
+
+24.
+mysql> select onum, snum,amt
+    -> FROM orders
+    -> where amt in (select max(amt)
+    ->  from orders
+    -> group by snum, odate
+    -> having odate='1996-10-03');
++------+------+---------+
+| onum | snum | amt     |
++------+------+---------+
+| 3002 | 1004 | 1900.10 |
+| 3003 | 1001 |  767.19 |
+| 3005 | 1002 | 5160.45 |
+| 3006 | 1007 | 1098.16 |
++------+------+---------+
+4 rows in set (0.01 sec)
+
+
+25.
+mysql> select cname from customers
+    -> where city in(select city from customers
+    ->        where snum=(select snum from salespeople
+    ->                       where sname='serres'));
++----------+
+| cname    |
++----------+
+| Liu      |
+| Grass    |
+| Cisneros |
++----------+
+3 rows in set (0.00 sec)
+
+26.
+mysql> select cnum,cname from customers where rating >200;
++------+----------+
+| cnum | cname    |
++------+----------+
+| 2004 | Grass    |
+| 2008 | Cisneros |
++------+----------+
+2 rows in set (0.00 sec)
+
+
+27.
+mysql> SELECT count(Distinct (snum)) As count
+    -> From Orders;
++-------+
+| count |
++-------+
+|     5 |
++-------+
+1 row in set (0.00 sec)
+
+
+28.
+mysql> SELECT c.cname, s.comm
+    -> FROM customers c JOIN salespeople s
+    -> ON c.snum = s.snum
+    -> WHERE s.comm > .12;
++----------+------+
+| cname    | comm |
++----------+------+
+| Liu      | 0.13 |
+| Grass    | 0.13 |
+| Cisneros | 0.15 |
++----------+------+
+3 rows in set (0.00 sec)
+
+
+29.
+mysql> SELECT c.snum,s.sname
+    -> FROM customers c JOIN salespeople s
+    -> ON c.snum = s.snum
+    -> group by c.snum
+    -> having count(c.snum)>1;
++------+--------+
+| snum | sname  |
++------+--------+
+| 1001 | Peel   |
+| 1002 | Serres |
++------+--------+
+2 rows in set (0.00 sec)
+
+
+30.
+mysql> SELECT distinct(s.sname)
+    -> FROM salespeople s JOIN customers c
+    -> ON s.snum = c.snum
+    -> WHERE c.city = s.city;
++--------+
+| sname  |
++--------+
+| Peel   |
+| Serres |
++--------+
+2 rows in set (0.00 sec)
+
+
+31.
+mysql> Select sname
+    -> FROM salespeople
+    -> WHERE sname LIKE 'P__l';
++-------+
+| sname |
++-------+
+| Peel  |
++-------+
+1 row in set (0.00 sec)
+
+
+32.
+mysql> SELECT onum
+    -> FROM Orders
+    -> WHERE cnum = (SELECT cnum
+    ->          FROM customers
+    ->          where cname = 'cisneros');
++------+
+| onum |
++------+
+| 3001 |
+| 3006 |
++------+
+2 rows in set (0.00 sec)
+
+
+33.
+mysql> SELECT  o.onum ,s.sname
+    ->  FROM orders o JOIN salespeople s
+    -> ON o.snum = s.snum
+    ->  WHERE amt IN( SELECT  max(amt) as amt
+    ->  FROM orders
+    ->  WHERE snum IN (Select snum
+    ->                   FROM salespeople
+    ->                   WHERE sname = 'serres' or sname = 'rifkin')
+    ->  GROUP BY snum);
++------+--------+
+| onum | sname  |
++------+--------+
+| 3005 | Serres |
+| 3006 | Rifkin |
++------+--------+
+2 rows in set (0.00 sec)
+
+34.
+mysql> SELECT snum, sname, comm, city
+    ->   FROM salespeople;
++------+---------+------+-----------+
+| snum | sname   | comm | city      |
++------+---------+------+-----------+
+| 1001 | Peel    | 0.12 | London    |
+| 1002 | Serres  | 0.13 | San Jose  |
+| 1003 | AxelRod | 0.10 | New York  |
+| 1004 | Motika  | 0.11 | London    |
+| 1005 | Fran    | 0.26 | London    |
+| 1007 | Rifkin  | 0.15 | Barcelona |
++------+---------+------+-----------+
+6 rows in set (0.00 sec)
+
+35.
+mysql> SELECT cname FROM customers
+    -> where cname between 'A' and 'G';
++----------+
+| cname    |
++----------+
+| Clemens  |
+| Cisneros |
++----------+
+2 rows in set (0.00 sec)
+
+
+94.
+mysql> select * from salespeople;
++------+---------+-----------+------+
+| snum | sname   | city      | comm |
++------+---------+-----------+------+
+| 1001 | Peel    | London    | 0.12 |
+| 1002 | Serres  | San Jose  | 0.13 |
+| 1003 | AxelRod | New York  | 0.10 |
+| 1004 | Motika  | London    | 0.11 |
+| 1005 | Fran    | London    | 0.26 |
+| 1007 | Rifkin  | Barcelona | 0.15 |
++------+---------+-----------+------+
+6 rows in set (0.00 sec)
+
+92.
+mysql> select * from Orders
+    -> where not (odate  = '1996-03-10'or snum > 1006) and amt>=1500;
++------+---------+------------+------+------+
+| onum | amt     | odate      | cnum | snum |
++------+---------+------------+------+------+
+| 3008 | 4723.00 | 1996-05-10 | 2006 | 1001 |
+| 3009 | 1713.23 | 1996-04-10 | 2002 | 1003 |
+| 3011 | 9891.88 | 1996-06-10 | 2006 | 1001 |
++------+---------+------------+------+------+
+3 rows in set (0.01 sec)
+
+

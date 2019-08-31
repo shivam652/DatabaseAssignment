@@ -1,0 +1,222 @@
+demysql> describe member;
++----------+-------------------------------------------+------+-----+---------+----------------+
+| Field    | Type                                      | Null | Key | Default | Extra          |
++----------+-------------------------------------------+------+-----+---------+----------------+
+| MemberID | int(11)                                   | NO   | PRI | NULL    | auto_increment |
+| Fname    | varchar(20)                               | NO   |     | NULL    |                |
+| Mname    | varchar(20)                               | YES  |     | NULL    |                |
+| Lname    | varchar(20)                               | NO   |     | NULL    |                |
+| Mem_DOJ  | date                                      | YES  |     | NULL    |                |
+| Email    | varchar(30)                               | YES  | UNI | NULL    |                |
+| phone    | char(10)                                  | YES  |     | NULL    |                |
+| mem_type | enum('regular','silver','gold','premium') | YES  |     | NULL    |                |
++----------+-------------------------------------------+------+-----+---------+----------------+
+8 rows in set (0.00 sec)
+
+mysql> create table book
+    -> (
+    -> BookId int auto_increment primary key,
+    -> BookName varchar(250),
+    -> price decimal(6,2)
+    -> );
+Query OK, 0 rows affected (0.09 sec)
+
+mysql> INSERT INTO member (Fname,Mname,Lname,Mem_DOJ,Email,phone,mem_type) VALUES
+    -> ('Omkar',NULL,'Shelar',now(),'omi@gmail.com','7827045893','regular');
+Query OK, 1 row affected, 1 warning (0.03 sec)
+
+mysql> INSERT INTO member (Fname,Mname,Lname,Mem_DOJ,Email,phone,mem_type) VALUES
+    -> ('shivam',NULL,'choudhary',now(),'shivam@gmail.com','7827876593','premium');
+Query OK, 1 row affected, 1 warning (0.03 sec)
+mysql> INSERT INTO member (Fname,Mname,Lname,Mem_DOJ,Email,phone,mem_type) VALUES
+    -> ('bhavesh',NULL,'patel',now(),'bhavesh@gmail.com','8745236788','gold');
+Query OK, 1 row affected, 1 warning (0.03 sec)
+
+mysql> select * from member;
++----------+---------+-------+-----------+------------+-------------------+------------+----------+
+| MemberID | Fname   | Mname | Lname     | Mem_DOJ    | Email             | phone      | mem_type |
++----------+---------+-------+-----------+------------+-------------------+------------+----------+
+|        1 | Omkar   | NULL  | Shelar    | 2019-08-27 | omi@gmail.com     | 7827045893 | regular  |
+|        2 | shivam  | NULL  | choudhary | 2019-08-27 | shivam@gmail.com  | 7827876593 | premium  |
+|        3 | bhavesh | NULL  | patel     | 2019-08-27 | bhavesh@gmail.com | 8745236788 | gold     |
++----------+---------+-------+-----------+------------+-------------------+------------+----------+
+3 rows in set (0.00 sec)
+mysql> describe Book;
++----------+--------------+------+-----+---------+----------------+
+| Field    | Type         | Null | Key | Default | Extra          |
++----------+--------------+------+-----+---------+----------------+
+| BookId   | int(11)      | NO   | PRI | NULL    | auto_increment |
+| BookName | varchar(250) | YES  |     | NULL    |                |
+| price    | decimal(6,2) | YES  |     | NULL    |                |
++----------+--------------+------+-----+---------+----------------+
+3 rows in set (0.00 sec)
+
+mysql> INSERT INTO Book (Bookname,price) VALUES
+    -> ('let us c',530),
+    -> ('complete java',1100),
+    -> ('jungle book',50),
+    -> ('rough book',10);
+Query OK, 4 rows affected (0.03 sec)
+Records: 4  Duplicates: 0  Warnings: 0
+
+mysql> select * from book
+    -> ;
++--------+---------------+---------+
+| BookId | BookName      | price   |
++--------+---------------+---------+
+|      1 | let us c      |  530.00 |
+|      2 | complete java | 1100.00 |
+|      3 | jungle book   |   50.00 |
+|      4 | rough book    |   10.00 |
++--------+---------------+---------+
+4 rows in set (0.00 sec)
+
+mysql> CREATE TABLE bookTran
+    -> (
+    -> trnID int auto_increment primary key,
+    -> trnDate date,
+    -> BookID int,
+    -> MemID int,
+    -> CONSTRAINT bookTran_BookID_fk
+    -> FOREIGN KEY (bookID)
+    -> REFERENCES book(bookID),
+    -> CONSTRAINT bookTran_memID_fk
+    -> FOREIGN KEY (MemID)
+    -> REFERENCES member(MemberID)
+    -> );
+Query OK, 0 rows affected (0.09 sec)
+
+mysql> INSERT INTO bookTran (trnDate,BookID,MemID) VALUES
+    -> (now(),4,3),(now(),1,2),('2010-05-19',3,1);
+Query OK, 3 rows affected, 2 warnings (0.03 sec)
+Records: 3  Duplicates: 0  Warnings: 2
+
+mysql> select * from Booktran;
++-------+------------+--------+-------+
+| trnID | trnDate    | BookID | MemID |
++-------+------------+--------+-------+
+|     2 | 2019-08-27 |      4 |     3 |
+|     3 | 2019-08-27 |      1 |     2 |
+|     4 | 2010-05-19 |      3 |     1 |
++-------+------------+--------+-------+
+3 rows in set (0.00 sec)mysql> INSERT INTO bookTran (trnDate,BookID,MemID) VALUES
+    -> (now(),4,4);
+ERROR 1452 (23000): Cannot add or update a child row: a foreign key constraint fails (`productcategory`.`booktran`, CONSTRAINT `bookTran_memID_fk` FOREIGN KEY (`MemID`) REFERENCES `member` (`MemberID`))
+
+mysql> select bookname, price
+    ->  from book
+    ->  where price > 50;
++---------------+---------+
+| bookname      | price   |
++---------------+---------+
+| let us c      |  530.00 |
+| complete java | 1100.00 |
++---------------+---------+
+2 rows in set (0.00 sec)
+
+mysql> select bookname, price, price*.1 as tax
+    ->  from book
+    -> where price*.1 >= 5;
++---------------+---------+---------+
+| bookname      | price   | tax     |
++---------------+---------+---------+
+| let us c      |  530.00 |  53.000 |
+| complete java | 1100.00 | 110.000 |
+| jungle book   |   50.00 |   5.000 |
++---------------+---------+---------+
+3 rows in set (0.00 sec)
+
+mysql> select bookname
+    -> from book
+    -> where bookname like 'l%';
++----------+
+| bookname |
++----------+
+| let us c |
++----------+
+1 row in set (0.00 sec)
+
+mysql> select bookname
+    -> from book
+    -> where bookname like '%us%';
++----------+
+| bookname |
++----------+
+| let us c |
++----------+
+1 row in set (0.00 sec)
+
+mysql> select bookname
+    -> from book
+    -> where bookname like '%e%';
++---------------+
+| bookname      |
++---------------+
+| let us c      |
+| complete java |
+| jungle book   |
++---------------+
+3 rows in set (0.00 sec)
+
+mysql> select bookname
+    -> from book
+    -> where bookname like 'j__________';
++-------------+
+| bookname    |
++-------------+
+| jungle book |
++-------------+
+1 row in set (0.00 sec)
+
+mysql> where bookname like 'j??????????';
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'where bookname like
+'j??????????'' at line 1
+
+mysql> alter table member
+    -> add column dob date
+    -> after lname;
+Query OK, 3 rows affected (0.23 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+mysql> select * from member;
++----------+---------+-------+-----------+------+------------+-------------------+------------+----------+
+| MemberID | Fname   | Mname | Lname     | dob  | Mem_DOJ    | Email             | phone      | mem_type |
++----------+---------+-------+-----------+------+------------+-------------------+------------+----------+
+|        1 | Omkar   | NULL  | Shelar    | NULL | 2019-08-27 | omi@gmail.com     | 7827045893 | regular  |
+|        2 | shivam  | NULL  | choudhary | NULL | 2019-08-27 | shivam@gmail.com  | 7827876593 | premium  |
+|        3 | bhavesh | NULL  | patel     | NULL | 2019-08-27 | bhavesh@gmail.com | 8745236788 | gold     |
++----------+---------+-------+-----------+------+------------+-------------------+------------+----------+
+3 rows in set (0.00 sec)
+
+mysql> update member
+    -> set dob = '1997-05-19'
+    -> where MemberID = 1;
+Query OK, 1 row affected (0.03 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> update member
+    -> set dob = '1995-01-1'
+    -> where MemberID = 2;
+Query OK, 1 row affected (0.03 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> update member
+    -> set dob = '1996-10-10'
+    -> where MemberID = 3;
+Query OK, 1 row affected (0.05 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> alter table member
+    -> modify dob date not null;
+Query OK, 3 rows affected (0.19 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+mysql> select * from member;
++----------+---------+-------+-----------+------------+------------+-------------------+------------+----------+
+| MemberID | Fname   | Mname | Lname     | dob        | Mem_DOJ    | Email             | phone      | mem_type |
++----------+---------+-------+-----------+------------+------------+-------------------+------------+----------+
+|        1 | Omkar   | NULL  | Shelar    | 1997-05-19 | 2019-08-27 | omi@gmail.com     | 7827045893 | regular  |
+|        2 | shivam  | NULL  | choudhary | 1995-01-01 | 2019-08-27 | shivam@gmail.com  | 7827876593 | premium  |
+|        3 | bhavesh | NULL  | patel     | 1996-10-10 | 2019-08-27 | bhavesh@gmail.com | 8745236788 | gold     |
++----------+---------+-------+-----------+------------+------------+-------------------+------------+----------+
+3 rows in set (0.00 sec)

@@ -1,0 +1,248 @@
+mysql> select * from customers;
++------+----------+----------+--------+------+
+| cnum | cname    | city     | rating | snum |
++------+----------+----------+--------+------+
+| 2001 | Hoffman  | London   |    100 | 1001 |
+| 2002 | Giovanni | Rome     |    200 | 1003 |
+| 2003 | Liu      | San Jose |    200 | 1002 |
+| 2004 | Grass    | Berlin   |    300 | 1002 |
+| 2006 | Clemens  | London   |    100 | 1001 |
+| 2007 | Pereira  | Rome     |    100 | 1004 |
+| 2008 | Cisneros | San Jose |    300 | 1007 |
++------+----------+----------+--------+------+
+7 rows in set (0.20 sec)
+
+mysql> select * from salespeople;
++------+---------+-----------+------+
+| snum | sname   | city      | comm |
++------+---------+-----------+------+
+| 1001 | Peel    | London    | 0.12 |
+| 1002 | Serres  | San Jose  | 0.13 |
+| 1003 | AxelRod | New York  |  0.1 |
+| 1004 | Motika  | London    | 0.11 |
+| 1005 | Fran    | London    | 0.26 |
+| 1007 | Rifkin  | Barcelona | 0.15 |
++------+---------+-----------+------+
+6 rows in set (0.03 sec)
+
+mysql> select * from orders;
++------+---------+------------+------+------+
+| onum | amt     | odate      | cnum | snum |
++------+---------+------------+------+------+
+| 3001 |   18.69 | 1996-03-10 | 2008 | 1007 |
+| 3002 | 1900.10 | 1996-03-10 | 2007 | 1004 |
+| 3003 |  767.19 | 1996-03-10 | 2001 | 1001 |
+| 3005 | 5160.45 | 1996-03-10 | 2003 | 1002 |
+| 3006 | 1098.16 | 1996-03-10 | 2008 | 1007 |
+| 3007 |   75.75 | 1996-04-10 | 2002 | 1003 |
+| 3008 | 4723.00 | 1996-05-10 | 2006 | 1001 |
+| 3009 | 1713.23 | 1996-04-10 | 2002 | 1003 |
+| 3010 | 1309.95 | 1996-06-10 | 2004 | 1002 |
+| 3011 | 9891.88 | 1996-06-10 | 2006 | 1001 |
++------+---------+------------+------+------+
+10 rows in set (0.03 sec)
+
+mysql> select cname, city from customers group by rating;
++----------+--------+
+| cname    | city   |
++----------+--------+
+| Hoffman  | London |
+| Giovanni | Rome   |
+| Grass    | Berlin |
++----------+--------+
+3 rows in set (0.03 sec)
+
+mysql> select rating, count(*) AS count from customers group by rating;
++--------+-------+
+| rating | count |
++--------+-------+
+|    100 |     3 |
+|    200 |     2 |
+|    300 |     2 |
++--------+-------+
+3 rows in set (0.03 sec)
+
+mysql> select rating, count(*) AS count from customers group by rating having count(*)>2;
+
++--------+-------+
+| rating | count |
++--------+-------+
+|    100 |     3 |
++--------+-------+
+1 row in set (0.00 sec)
+
+mysql> select * from customers;
++------+----------+----------+--------+------+
+| cnum | cname    | city     | rating | snum |
++------+----------+----------+--------+------+
+| 2001 | Hoffman  | London   |    100 | 1001 |
+| 2002 | Giovanni | Rome     |    200 | 1003 |
+| 2003 | Liu      | San Jose |    200 | 1002 |
+| 2004 | Grass    | Berlin   |    300 | 1002 |
+| 2006 | Clemens  | London   |    100 | 1001 |
+| 2007 | Pereira  | Rome     |    100 | 1004 |
+| 2008 | Cisneros | San Jose |    300 | 1007 |
++------+----------+----------+--------+------+
+7 rows in set (0.00 sec)
+
+mysql> select * from salespeople;
++------+---------+-----------+------+
+| snum | sname   | city      | comm |
++------+---------+-----------+------+
+| 1001 | Peel    | London    | 0.12 |
+| 1002 | Serres  | San Jose  | 0.13 |
+| 1003 | AxelRod | New York  |  0.1 |
+| 1004 | Motika  | London    | 0.11 |
+| 1005 | Fran    | London    | 0.26 |
+| 1007 | Rifkin  | Barcelona | 0.15 |
++------+---------+-----------+------+
+6 rows in set (0.00 sec)
+
+
+mysql> select cus.cname,cus.city,sales.sname,sales.city
+    -> from
+    -> customers cus INNER JOIN salespeople sales
+    -> ON
+    -> cus.snum=sales.snum;
++----------+----------+---------+-----------+
+| cname    | city     | sname   | city      |
++----------+----------+---------+-----------+
+| Hoffman  | London   | Peel    | London    |
+| Clemens  | London   | Peel    | London    |
+| Liu      | San Jose | Serres  | San Jose  |
+| Grass    | Berlin   | Serres  | San Jose  |
+| Giovanni | Rome     | AxelRod | New York  |
+| Pereira  | Rome     | Motika  | London    |
+| Cisneros | San Jose | Rifkin  | Barcelona |
++----------+----------+---------+-----------+
+7 rows in set (0.00 sec)
+
+mysql> select cus.cname,cus.city,sales.sname,sales.city
+    -> from
+    -> customers cus RIGHT OUTER JOIN salespeople sales
+    -> ON
+    -> cus.snum=sales.snum;
++----------+----------+---------+-----------+
+| cname    | city     | sname   | city      |
++----------+----------+---------+-----------+
+| Hoffman  | London   | Peel    | London    |
+| Clemens  | London   | Peel    | London    |
+| Liu      | San Jose | Serres  | San Jose  |
+| Grass    | Berlin   | Serres  | San Jose  |
+| Giovanni | Rome     | AxelRod | New York  |
+| Pereira  | Rome     | Motika  | London    |
+| NULL     | NULL     | Fran    | London    |
+| Cisneros | San Jose | Rifkin  | Barcelona |
++----------+----------+---------+-----------+
+8 rows in set (0.01 sec)
+
+mysql> select cus.cname,cus.city,sales.sname,sales.city
+    -> from
+    -> customers cus LEFT OUTER JOIN salespeople sales
+    -> ON
+    -> cus.snum=sales.snum;
++----------+----------+---------+-----------+
+| cname    | city     | sname   | city      |
++----------+----------+---------+-----------+
+| Hoffman  | London   | Peel    | London    |
+| Giovanni | Rome     | AxelRod | New York  |
+| Liu      | San Jose | Serres  | San Jose  |
+| Grass    | Berlin   | Serres  | San Jose  |
+| Clemens  | London   | Peel    | London    |
+| Pereira  | Rome     | Motika  | London    |
+| Cisneros | San Jose | Rifkin  | Barcelona |
++----------+----------+---------+-----------+
+7 rows in set (0.00 sec)
+
+mysql> select orders.onum, orders.amt,cus.cname,sales.sname
+    -> from orders INNER JOIN customers cus
+    -> ON
+    -> orders.cnum=cus.cnum
+    -> INNER JOIN salespeople sales
+    -> ON
+    -> orders.snum=sales.snum;
++------+---------+----------+---------+
+| onum | amt     | cname    | sname   |
++------+---------+----------+---------+
+| 3003 |  767.19 | Hoffman  | Peel    |
+| 3008 | 4723.00 | Clemens  | Peel    |
+| 3011 | 9891.88 | Clemens  | Peel    |
+| 3005 | 5160.45 | Liu      | Serres  |
+| 3010 | 1309.95 | Grass    | Serres  |
+| 3007 |   75.75 | Giovanni | AxelRod |
+| 3009 | 1713.23 | Giovanni | AxelRod |
+| 3002 | 1900.10 | Pereira  | Motika  |
+| 3001 |   18.69 | Cisneros | Rifkin  |
+| 3006 | 1098.16 | Cisneros | Rifkin  |
++------+---------+----------+---------+
+10 rows in set (0.00 sec)
+
+
+mysql> select * from Employee;
++-------+---------+---------+--------+-------+
+| EmpID | EmpName | Dept    | Salary | MgrID |
++-------+---------+---------+--------+-------+
+|     1 | Ramesh  | sales   |  20000 |     4 |
+|     2 | Suresh  | tech    |  25000 |     3 |
+|     3 | Mahesh  | Support |  15000 |     2 |
+|     4 | Naresh  | Admin   |  30000 |  NULL |
++-------+---------+---------+--------+-------+
+4 rows in set (0.00 sec)
+
+mysql> select mgr.EmpName, emp.EmpName as Manager
+    -> FROM Employee emp INNER JOIN Employee mgr
+    -> ON mgr.MgrID = emp.EmpID;
++---------+---------+
+| EmpName | Manager |
++---------+---------+
+| Mahesh  | Suresh  |
+| Suresh  | Mahesh  |
+| Ramesh  | Naresh  |
++---------+---------+
+3 rows in set (0.00 sec)
+
+mysql> select mgr.EmpName, emp.EmpName as Manager
+    -> FROM Employee emp RIGHT OUTER JOIN Employee mgr
+    -> ON mgr.MgrID = emp.EmpID;
++---------+---------+
+| EmpName | Manager |
++---------+---------+
+| Ramesh  | Naresh  |
+| Suresh  | Mahesh  |
+| Mahesh  | Suresh  |
+| Naresh  | NULL    |
++---------+---------+
+4 rows in set (0.00 sec)
+
+mysql> SELECT EmpName
+    -> FROM Employee
+    -> WHERE MgrID = (SELECT MgrID
+    ->          FROM Employee
+    ->          WHERE EmpName = 'Suresh')
+    -> AND NOT (EmpName = 'Suresh');
+Empty set (0.00 sec)
+
+mysql> SELECT emp.EmpName, emp.salary, count(*) AS RowCount
+    -> FROM Employee emp INNER JOIN Employee e
+    -> ON emp.salary <= e.salary
+    -> GROUP BY emp.EmpName, emp.Salary
+    -> having count(Distinct e.salary) = 1;
++---------+--------+----------+
+| EmpName | salary | RowCount |
++---------+--------+----------+
+| Naresh  |  30000 |        1 |
++---------+--------+----------+
+1 row in set (0.01 sec)
+
+mysql> SELECT emp.EmpName, emp.salary, count(*) AS RowCount
+    -> FROM Employee emp INNER JOIN Employee e
+    -> ON emp.salary <= e.salary
+    -> GROUP BY emp.EmpName, emp.Salary
+    -> having count(Distinct e.salary) = 3;
++---------+--------+----------+
+| EmpName | salary | RowCount |
++---------+--------+----------+
+| Ramesh  |  20000 |        3 |
++---------+--------+----------+
+1 row in set (0.00 sec)
+

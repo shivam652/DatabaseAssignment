@@ -1,0 +1,268 @@
+mysql> select * from employee;
++-------+----------+--------+--------+-------+
+| empID | name     | salary | deptID | mrgID |
++-------+----------+--------+--------+-------+
+|     1 | ramesh   |  25000 |      2 |     2 |
+|     2 | suresh   |  25000 |      3 |     3 |
+|     3 | mahesh   |  20000 |      4 |     4 |
+|     4 | hitesh   |  30000 |      2 |     6 |
+|     5 | gitesh   |  15000 |      3 |     1 |
+|     6 | naresh   |  35000 |      2 |     5 |
+|     7 | nitesh   |  15000 |      2 |     6 |
+|     8 | preitesh |  20000 |      1 |     7 |
+|     9 | paresh   |  40000 |      1 |  NULL |
++-------+----------+--------+--------+-------+
+9 rows in set (0.00 sec)
+
+mysql> select emp.name, emp.deptID, emp.salary
+    -> FROM employee emp
+    -> where salary > (select AVG(salary)
+    -> 			FROM employee
+    -> 			WHERE deptID = emp.deptID
+    -> );
++--------+--------+--------+
+| name   | deptID | salary |
++--------+--------+--------+
+| suresh |      3 |  25000 |
+| hitesh |      2 |  30000 |
+| naresh |      2 |  35000 |
+| paresh |      1 |  40000 |
++--------+--------+--------+
+4 rows in set (0.03 sec)
+
+mysql> select name, DeptID, salary
+    -> FROM employee e1 JOIN 
+    -> 	(SELECT DeptID, AVG(salary) AS AVGSalary
+    -> 	  FROM Employee group by DeptID ) e2
+    -> ON e1.deptID = e2.deptID
+    -> AND e1.salary > e2.AVGSalary;
+ERROR 1052 (23000): Column 'DeptID' in field list is ambiguous
+mysql> select e1.name, e1.DeptID, e1.salary
+    -> FROM employee e1 JOIN 
+    -> 	(SELECT DeptID, AVG(salary) AS AVGSalary
+    -> 	  FROM Employee group by DeptID ) e2
+    -> ON e1.deptID = e2.deptID
+    -> AND e1.salary > e2.AVGSalary;
++--------+--------+--------+
+| name   | DeptID | salary |
++--------+--------+--------+
+| suresh |      3 |  25000 |
+| hitesh |      2 |  30000 |
+| naresh |      2 |  35000 |
+| paresh |      1 |  40000 |
++--------+--------+--------+
+4 rows in set (0.00 sec)
+
+mysql> create table emp(
+    -> empid int, hiredate date, designation varchar(20));
+Query OK, 0 rows affected (0.06 sec)
+
+mysql> create table emphistory(
+    -> empid int, start date, end date, designation varchar(20));
+Query OK, 0 rows affected (0.06 sec)
+
+mysql> alter table emp 
+    -> modify empid int primary key;
+Query OK, 0 rows affected (0.14 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+
+mysql> alter table emphistory
+    -> modify empid int primary key;
+Query OK, 0 rows affected (0.13 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> desc emphistory
+    -> ;
++-------------+-------------+------+-----+---------+-------+
+| Field       | Type        | Null | Key | Default | Extra |
++-------------+-------------+------+-----+---------+-------+
+| empid       | int(11)     | NO   | PRI | NULL    |       |
+| start       | date        | YES  |     | NULL    |       |
+| end         | date        | YES  |     | NULL    |       |
+| designation | varchar(20) | YES  |     | NULL    |       |
++-------------+-------------+------+-----+---------+-------+
+4 rows in set (0.03 sec)
+
+mysql> select empid
+    -> From emp UNION
+    -> select EmpID 
+    -> FROM emphistory;
+Empty set (0.03 sec)
+
+mysql> insert into emp values
+    -> (1001,'2018-08-01','sales rep'),
+    -> (1002,'2017-03-05','sales mgr'),
+    -> (1003,'2016-01-02','opr mgr'),
+    -> (1004,'2019-08-30','finance rep');
+Query OK, 4 rows affected (0.03 sec)
+Records: 4  Duplicates: 0  Warnings: 0
+
+mysql> alter table emphistory
+    -> modify empid int;
+Query OK, 0 rows affected (0.17 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> desc emphistory;
++-------------+-------------+------+-----+---------+-------+
+| Field       | Type        | Null | Key | Default | Extra |
++-------------+-------------+------+-----+---------+-------+
+| empid       | int(11)     | NO   | PRI | 0       |       |
+| start       | date        | YES  |     | NULL    |       |
+| end         | date        | YES  |     | NULL    |       |
+| designation | varchar(20) | YES  |     | NULL    |       |
++-------------+-------------+------+-----+---------+-------+
+4 rows in set (0.00 sec)
+
+mysql> alter table emphistory
+    -> drop primary key;
+Query OK, 0 rows affected (0.28 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> desc emphistory;
++-------------+-------------+------+-----+---------+-------+
+| Field       | Type        | Null | Key | Default | Extra |
++-------------+-------------+------+-----+---------+-------+
+| empid       | int(11)     | NO   |     | 0       |       |
+| start       | date        | YES  |     | NULL    |       |
+| end         | date        | YES  |     | NULL    |       |
+| designation | varchar(20) | YES  |     | NULL    |       |
++-------------+-------------+------+-----+---------+-------+
+4 rows in set (0.00 sec)
+
+mysql> insert into emphistory values
+    -> (1001,'2018-08-01','2016-12-24','sales trainee'),
+    -> (1002,'2017-03-05','2017-09-05','sales rep'),
+    -> (1003,'2016-01-02','2016-01-02','opr trainee'),
+    -> (1003,'2019-08-30','2017-03-03','opr executive');
+Query OK, 4 rows affected (0.02 sec)
+Records: 4  Duplicates: 0  Warnings: 0
+
+mysql> select empid From emp
+    -> UNION
+    -> select empid FROM emphistory;
++-------+
+| empid |
++-------+
+|  1001 |
+|  1002 |
+|  1003 |
+|  1004 |
++-------+
+4 rows in set (0.00 sec)
+
+mysql> select empid From emp
+    -> UNION ALL
+    -> select empid FROM emphistory;
++-------+
+| empid |
++-------+
+|  1001 |
+|  1002 |
+|  1003 |
+|  1004 |
+|  1001 |
+|  1002 |
+|  1003 |
+|  1003 |
++-------+
+8 rows in set (0.00 sec)
+
+mysql> show tables;
++---------------------------+
+| Tables_in_productcategory |
++---------------------------+
+| book                      |
+| booktran                  |
+| emp                       |
+| emphistory                |
+| employee                  |
+| member                    |
++---------------------------+
+6 rows in set (0.03 sec)
+
+mysql> select * from Employee;
++-------+----------+--------+--------+-------+
+| empID | name     | salary | deptID | mrgID |
++-------+----------+--------+--------+-------+
+|     1 | ramesh   |  25000 |      2 |     2 |
+|     2 | suresh   |  25000 |      3 |     3 |
+|     3 | mahesh   |  20000 |      4 |     4 |
+|     4 | hitesh   |  30000 |      2 |     6 |
+|     5 | gitesh   |  15000 |      3 |     1 |
+|     6 | naresh   |  35000 |      2 |     5 |
+|     7 | nitesh   |  15000 |      2 |     6 |
+|     8 | preitesh |  20000 |      1 |     7 |
+|     9 | paresh   |  40000 |      1 |  NULL |
++-------+----------+--------+--------+-------+
+9 rows in set (0.00 sec)
+
+mysql> use DBTASSingment;
+Database changed
+mysql> select * from orders;
++------+---------+------------+------+------+
+| onum | amt     | odate      | cnum | snum |
++------+---------+------------+------+------+
+| 3001 |   18.69 | 1996-10-03 | 2008 | 1007 |
+| 3002 | 1900.10 | 1996-10-03 | 2007 | 1004 |
+| 3003 |  767.19 | 1996-10-03 | 2001 | 1001 |
+| 3005 | 5160.45 | 1996-10-03 | 2003 | 1002 |
+| 3006 | 1098.16 | 1996-10-03 | 2008 | 1007 |
+| 3007 |   75.75 | 1996-10-04 | 2002 | 1003 |
+| 3008 | 4723.00 | 1996-10-05 | 2006 | 1001 |
+| 3009 | 1713.23 | 1996-10-04 | 2002 | 1003 |
+| 3010 | 1309.95 | 1996-10-06 | 2004 | 1002 |
+| 3011 | 9891.88 | 1996-10-06 | 2006 | 1001 |
++------+---------+------------+------+------+
+10 rows in set (0.00 sec)
+
+mysql> select * from customers;
++------+----------+----------+--------+------+
+| cnum | cname    | city     | rating | snum |
++------+----------+----------+--------+------+
+| 2001 | Hoffman  | London   |    100 | 1001 |
+| 2002 | Giovanni | Rome     |    200 | 1003 |
+| 2003 | Liu      | San Jose |    200 | 1002 |
+| 2004 | Grass    | Berlin   |    300 | 1002 |
+| 2006 | Clemens  | London   |    100 | 1001 |
+| 2007 | Pereira  | Rome     |    100 | 1004 |
+| 2008 | Cisneros | San Jose |    300 | 1007 |
++------+----------+----------+--------+------+
+7 rows in set (0.00 sec)
+
+mysql> select * from salespople;
+ERROR 1146 (42S02): Table 'dbtassingment.salespople' doesn't exist
+mysql> select * from salespeople;
++------+---------+-----------+------+
+| snum | sname   | city      | comm |
++------+---------+-----------+------+
+| 1001 | Peel    | London    | 0.12 |
+| 1002 | Serres  | San Jose  | 0.13 |
+| 1003 | AxelRod | New York  | 0.10 |
+| 1004 | Motika  | London    | 0.11 |
+| 1005 | Fran    | London    | 0.26 |
+| 1007 | Rifkin  | Barcelona | 0.15 |
++------+---------+-----------+------+
+6 rows in set (0.00 sec)
+
+mysql> SELECT cus.cname, cus.city, sp.sname
+    -> FROM customers cus LEFT OUTER JOIN salespeople sp
+    -> ON cus.snum = sp.snum
+    -> UNION
+    -> SELECT cus.cname, cus.city, sp.sname
+    -> FROM customers cus RIGHT OUTER JOIN salespeople sp
+    -> ON cus.snum = sp.snum;
++----------+----------+---------+
+| cname    | city     | sname   |
++----------+----------+---------+
+| Hoffman  | London   | Peel    |
+| Giovanni | Rome     | AxelRod |
+| Liu      | San Jose | Serres  |
+| Grass    | Berlin   | Serres  |
+| Clemens  | London   | Peel    |
+| Pereira  | Rome     | Motika  |
+| Cisneros | San Jose | Rifkin  |
+| NULL     | NULL     | Fran    |
++----------+----------+---------+
+8 rows in set (0.01 sec)
+
